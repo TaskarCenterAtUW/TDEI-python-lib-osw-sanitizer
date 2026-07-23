@@ -5,13 +5,10 @@ on:
     branches:
       - main
       - develop
-      - stage
-      - "feature-*"
   pull_request:
     branches:
       - main
       - develop
-      - stage
   workflow_dispatch:
 
 permissions:
@@ -52,9 +49,7 @@ jobs:
 
           if [[ $branch_name == "main" ]]; then
             echo "output_folder=prod" >> $GITHUB_ENV
-          elif [[ $branch_name == "stage" ]]; then
-            echo "output_folder=stage" >> $GITHUB_ENV
-          elif [[ $branch_name == "develop" || $branch_name == feature-* ]]; then
+          elif [[ $branch_name == "develop" ]]; then
             echo "output_folder=dev" >> $GITHUB_ENV
           else
             echo "Unknown branch: $branch_name"
