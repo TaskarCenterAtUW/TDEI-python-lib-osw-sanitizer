@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Bumped package version for PyPI republish after initial `0.1.0` release.
+- Made `pyproject.toml` the single hardcoded version source.
+
 ## 0.1.0
 
 - Added [#4091](https://dev.azure.com/TDEI-UW/TDEI/_workitems/edit/4091): initial `osw-sanitizer` Python package.
