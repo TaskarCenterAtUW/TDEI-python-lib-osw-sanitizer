@@ -1,0 +1,67 @@
+name: Check and Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    environment:
+      name: Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build wheel
+          python -m pip install -r requirements.txt
+
+      - name: Fetch local package version
+        run: |
+          packageLocalVersion=$(python -c 'from version import version; print(version);')
+          echo "localVersion=$packageLocalVersion" >> "$GITHUB_ENV"
+
+      - name: Fetch remote package version
+        run: |
+          packageRemoteVersion=$(python - <<'PY'
+          import json
+          import urllib.error
+          import urllib.request
+
+          try:
+              with urllib.request.urlopen("https://pypi.org/pypi/osw-sanitizer/json", timeout=30) as response:
+                  print(json.load(response)["info"]["version"])
+          except urllib.error.HTTPError as exc:
+              if exc.code == 404:
+                  print("0.0.0")
+              else:
+                  raise
+          PY
+          )
+          echo "remoteVersion=$packageRemoteVersion" >> "$GITHUB_ENV"
+
+      - name: Print local and remote versions
+        run: echo "Local version ${{ env.localVersion }} and remote version ${{ env.remoteVersion }}"
+
+      - name: Compare local and remote versions
+        run: dpkg --compare-versions "${{ env.localVersion }}" "gt" "${{ env.remoteVersion }}"
+
+      - name: Build package
+        run: python -m build
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}

@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "osw-sanitizer"
+version = "0.1.0"
+description = "Python package for sanitizing OpenSidewalks dataset ZIP files"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+  { name = "Sujata Misra", email = "sujatam@gaussiansolutions.com" }
+]
+keywords = ["opensidewalks", "osw", "geojson", "sanitization", "tdei"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: GIS",
+]
+dependencies = [
+  "ijson>=3.2",
+]
+
+[project.urls]
+Documentation = "https://github.com/TaskarCenterAtUW/TDEI-python-lib-osw-sanitizer/blob/main/README.md"
+GitHub = "https://github.com/TaskarCenterAtUW/TDEI-python-lib-osw-sanitizer"
+Changelog = "https://github.com/TaskarCenterAtUW/TDEI-python-lib-osw-sanitizer/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+osw_sanitizer = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+
+[tool.coverage.run]
+branch = true
+source = ["osw_sanitizer"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 90
+exclude_lines = [
+  "if __name__ == .__main__.:",
+]
